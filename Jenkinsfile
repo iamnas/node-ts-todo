@@ -23,7 +23,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh '''
-                    sonar-scanner \
+                    /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonar-scanner/bin/sonar-scanner  \
                     -Dsonar.projectKey=node-ts-todo \
                     -Dsonar.sources=src \
                     -Dsonar.tests=tests \
