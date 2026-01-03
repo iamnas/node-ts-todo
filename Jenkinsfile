@@ -8,26 +8,27 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                sh 'npm install'
+                sh 'node -v'
+                sh 'npm ci'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'npm run build'
+                sh 'npm test -- --coverage'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'sonar-scanner'
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                    sonar-scanner \
+                      -Dsonar.projectKey=node-ts-todo \
+                      -Dsonar.sources=src \
+                      -Dsonar.tests=tests \
+                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                    '''
                 }
             }
         }
