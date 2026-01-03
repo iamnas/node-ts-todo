@@ -22,7 +22,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh """
+                    sh '''
                     sonar-scanner \
                     -Dsonar.projectKey=node-ts-todo \
                     -Dsonar.sources=src \
@@ -31,8 +31,9 @@ pipeline {
                     -Dsonar.typescript.tsconfigPath=tsconfig.json \
                     -Dsonar.host.url=http://sonar:9000 \
                     -Dsonar.login=${env.SONAR_TOKEN}
-                    """
+                    '''
                 }
+
             }
         }
     }
