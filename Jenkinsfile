@@ -23,11 +23,14 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh """
-                    ${tool 'sonar-scanner'}/bin/sonar-scanner \
-                      -Dsonar.projectKey=node-ts-todo \
-                      -Dsonar.sources=. \
-                      -Dsonar.host.url=http://localhost:9000 \
-                      -Dsonar.login=sqp_42ea5a5628030625025f14e39e080f01649fb7f0
+                    sonar-scanner \
+                    -Dsonar.projectKey=node-ts-todo \
+                    -Dsonar.sources=src \
+                    -Dsonar.tests=tests \
+                    -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                    -Dsonar.typescript.tsconfigPath=tsconfig.json \
+                    -Dsonar.host.url=http://sonar:9000 \
+                    -Dsonar.login=${env.SONAR_TOKEN}
                     """
                 }
             }
