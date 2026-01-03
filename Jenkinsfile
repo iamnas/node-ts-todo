@@ -22,13 +22,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh '''
-                    sonar-scanner \
+                    sh """
+                    ${tool 'sonar-scanner'}/bin/sonar-scanner \
                       -Dsonar.projectKey=nodejs \
                       -Dsonar.sources=src \
                       -Dsonar.tests=tests \
-                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-                    '''
+                      -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                      -Dsonar.typescript.tsconfigPath=tsconfig.json
+                    """
                 }
             }
         }
