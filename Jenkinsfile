@@ -1,14 +1,11 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Check Node') {
-            steps {
-                sh 'node -v || true'
-                sh 'npm -v || true'
-            }
-        }
+    tools {
+        nodejs 'node18'
+    }
 
+    stages {
         stage('Install') {
             steps {
                 sh 'npm install'
@@ -18,6 +15,12 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'npm test'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
             }
         }
 
