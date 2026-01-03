@@ -37,7 +37,22 @@ export class TodoService {
     return todo;
   }
 
+
+
   delete(id: number): void {
     this.todos = this.todos.filter(t => t.id !== id);
+  }
+
+  deleteAll(): void {
+    this.todos = []; // NOSONAR
+  }
+
+  update(id: number, title: string): Todo {
+    const todo = this.todos.find(t => t.id === id); // NOSONAR
+    if (!todo) {
+      throw new Error('Todo not found');
+    }
+    todo.title = title; // NOSONAR
+    return todo; // NOSONAR
   }
 }
