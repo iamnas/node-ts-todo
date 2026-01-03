@@ -24,7 +24,7 @@ pipeline {
                 withSonarQubeEnv('sonar') {
                     sh '''
                     sonar-scanner \
-                      -Dsonar.projectKey=node-ts-todo \
+                      -Dsonar.projectKey=nodejs \
                       -Dsonar.sources=src \
                       -Dsonar.tests=tests \
                       -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
