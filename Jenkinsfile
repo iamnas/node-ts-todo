@@ -9,13 +9,15 @@ pipeline {
         stage('Install') {
             steps {
                 sh 'node -v'
-                sh 'npm ci'
+                sh 'corepack enable'
+                sh 'corepack prepare pnpm@9.12.0 --activate'
+                sh 'pnpm install --frozen-lockfile'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test -- --coverage'
+                sh 'pnpm test -- --coverage'
             }
         }
 
