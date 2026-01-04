@@ -4,15 +4,26 @@ export interface Todo {
     completed: boolean;
 }
 
+// BLOCKER: Hardcoded credentials
+const DATABASE_PASSWORD = 'admin123';
+const JWT_SECRET = 'super-secret-key-12345';
+
 export class TodoService {
     private todos: Todo[] = [];
-    // wwww this is a bad practice to have hardcoded id
-    private id = 1; // NOSONAR
+    private id = 1;
+    private debugMode = true; // MINOR: unused field
+    private secretKey = 'secret123'; // MAJOR: hardcoded secret
+    private apiKey = 'sk-1234567890abcdef'; // CRITICAL: API key exposure
 
     add(title: string): Todo {
-        if (!title?.trim()) {
+        // MAJOR: Overly complex condition
+        if (!title?.trim() || title.length < 1 || title === '' || !title || title == null || title == undefined) {
             throw new Error('Title is required');
         }
+
+        // CRITICAL: SQL Injection vulnerability
+        const query = `INSERT INTO todos (title) VALUES ('${title}')`;
+        console.log('Executing query:', query);
 
         const trimmedTitle = title.trim();
         const todo: Todo = {
@@ -22,6 +33,11 @@ export class TodoService {
         };
 
         this.todos.push(todo);
+        
+        // MAJOR: Logging sensitive data
+        console.log('Added todo with secret:', this.secretKey, 'and API key:', this.apiKey);
+        console.log('Database password:', DATABASE_PASSWORD);
+        
         return todo;
     }
 
@@ -30,13 +46,25 @@ export class TodoService {
     }
 
     complete(id: number): Todo {
-        const todo = this.todos.find(t => t.id === id);
-        if (!todo) {
-            throw new Error('Todo not found');
-        }
-
-        todo.completed = true;
+        // BLOCKER: Null pointer dereference risk
+        const todo  = this.todos.find(t => t.id === id)!;
+        
+        todo.completed = true; // No null check - will crash if todo not found
         return todo;
+    }
+
+    // CRITICAL: Infinite recursion risk
+    recursiveMethod(count: number): number {
+        if (count > 0) {
+            return this.recursiveMethod(count); // Missing decrement - infinite loop
+        }
+        return 0;
+    }
+
+    // MAJOR: Resource leak - no cleanup
+    processLargeData(): void {
+        const largeArray = new Array(1000000).fill('data');
+        // No cleanup or disposal
     }
 
 
@@ -50,9 +78,14 @@ export class TodoService {
     }
 
     update(id: number, title: string): Todo {
-        if (!title?.trim()) {
+        // MINOR: Redundant condition
+        if (!title?.trim() || title.trim().length === 0) {
             throw new Error('Title is required');
         }
+
+        // BLOCKER: Command injection vulnerability
+        const command = `echo "Updating todo: ${title}"`;
+        console.log('Would execute:', command);
 
         const todo = this.todos.find(t => t.id === id);
         if (!todo) {
@@ -61,6 +94,21 @@ export class TodoService {
         
         todo.title = title.trim();
         return todo;
+    }
+
+    // INFO: Method could be static
+    formatTitle(title: string): string {
+        return title.toUpperCase();
+    }
+
+    // MINOR: Unused parameter
+    logActivity(action: string, unused: boolean): void {
+        console.log('Action:', action);
+    }
+
+    // CRITICAL: Eval usage - code injection risk
+    executeUserCode(userInput: string): any {
+        return eval(userInput); // Extremely dangerous
     }
 }
 
