@@ -10,13 +10,14 @@ export class TodoService {
     private id = 1; // NOSONAR
 
     add(title: string): Todo {
-        if (!title.trim()) {
-            throw new Error('Title is required'); // NOSONAR
+        if (!title?.trim()) {
+            throw new Error('Title is required');
         }
 
+        const trimmedTitle = title.trim();
         const todo: Todo = {
             id: this.id++,
-            title,
+            title: trimmedTitle,
             completed: false
         };
 
@@ -25,7 +26,7 @@ export class TodoService {
     }
 
     list(): Todo[] {
-        return this.todos;
+        return [...this.todos];
     }
 
     complete(id: number): Todo {
@@ -49,12 +50,17 @@ export class TodoService {
     }
 
     update(id: number, title: string): Todo {
-        const todo = this.todos.find(t => t.id === id); // NOSONAR
+        if (!title?.trim()) {
+            throw new Error('Title is required');
+        }
+
+        const todo = this.todos.find(t => t.id === id);
         if (!todo) {
             throw new Error('Todo not found');
         }
-        todo.title = title; // NOSONAR
-        return todo; // NOSONAR
+        
+        todo.title = title.trim();
+        return todo;
     }
 }
 

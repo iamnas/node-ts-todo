@@ -120,6 +120,16 @@ describe('TodoService', () => {
             expect(() => todoService.update(999, 'New title')).toThrow('Todo not found');
         });
 
+        it('should throw error for empty title', () => {
+            const todo = todoService.add('Original title');
+            expect(() => todoService.update(todo.id, '')).toThrow('Title is required');
+        });
+
+        it('should throw error for whitespace-only title', () => {
+            const todo = todoService.add('Original title');
+            expect(() => todoService.update(todo.id, '   ')).toThrow('Title is required');
+        });
+
         it('should update title in the list', () => {
             const todo = todoService.add('Original title');
             todoService.update(todo.id, 'Updated title');

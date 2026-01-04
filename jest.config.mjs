@@ -4,5 +4,10 @@ export default {
   testMatch: ['**/tests/**/*.test.ts'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['lcov', 'text']
+  coverageReporters: ['lcov', 'text', 'cobertura', 'json'],
+  coveragePathIgnorePatterns: ['/node_modules/', '/tests/'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,js}',
+    '!src/**/*.d.ts'
+  ]
 };
