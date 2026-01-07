@@ -26,7 +26,15 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh 'npx sonar-scanner'
+                    sh '''
+              sonar-scanner \
+                -Dsonar.projectKey=node-ts-todo \
+                -Dsonar.projectName=node-ts-todo \
+                -Dsonar.sources=src \
+                -Dsonar.tests=tests \
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                -Dsonar.typescript.tsconfigPath=tsconfig.json
+            '''
                 }
             }
         }
