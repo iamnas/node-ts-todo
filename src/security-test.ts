@@ -63,12 +63,12 @@ var globalSecret = 'top-secret-key';
 let apiEndpoint = 'http://api.example.com'; // HTTP instead of HTTPS
 
 // Dead code
-function neverCalled() {
+export function neverCalled() {
     return 'This function is never used';
 }
 
 // Cognitive complexity
-function complexLogic(a: number, b: number, c: number) {
+export function complexLogic(a: number, b: number, c: number) {
     if (a > 0) {
         if (b > 0) {
             if (c > 0) {

@@ -1,10 +1,18 @@
 import { TodoService, Todo } from '../src/todo';
 
+// Mock console.log to avoid output during tests
+const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
 describe('TodoService', () => {
     let todoService: TodoService;
 
     beforeEach(() => {
         todoService = new TodoService();
+        consoleSpy.mockClear();
+    });
+
+    afterAll(() => {
+        consoleSpy.mockRestore();
     });
 
     describe('add', () => {
@@ -32,6 +40,20 @@ describe('TodoService', () => {
 
         it('should throw error for whitespace-only title', () => {
             expect(() => todoService.add('   ')).toThrow('Title is required');
+        });
+
+        it('should throw error for null title', () => {
+            expect(() => todoService.add(null as any)).toThrow('Title is required');
+        });
+
+        it('should throw error for undefined title', () => {
+            expect(() => todoService.add(undefined as any)).toThrow('Title is required');
+        });
+
+        it('should log sensitive data when adding todo', () => {
+            todoService.add('Test todo');
+            expect(consoleSpy).toHaveBeenCalledWith('Executing query:', "INSERT INTO todos (title) VALUES ('Test todo')");
+            expect(consoleSpy).toHaveBeenCalledWith('Added todo with secret:', 'secret123', 'and API key:', 'sk-1234567890abcdef');
         });
     });
 
@@ -63,6 +85,10 @@ describe('TodoService', () => {
         // it('should throw error for non-existent todo', () => {
         //     // expect(() => todoService.complete(999)).toThrow('Todo not found');
         // });
+
+        it('should crash when todo not found (testing null pointer)', () => {
+            expect(() => todoService.complete(999)).toThrow();
+        });
     });
 
     describe('delete', () => {
@@ -157,6 +183,38 @@ describe('TodoService', () => {
             expect(todos[0].title).toBe('Updated Task 1');
             expect(todos[0].completed).toBe(true);
             expect(todos[1].completed).toBe(false);
+        });
+    });
+
+    describe('recursiveMethod', () => {
+        it('should return 0 for count <= 0', () => {
+            expect(todoService.recursiveMethod(0)).toBe(0);
+            expect(todoService.recursiveMethod(-1)).toBe(0);
+        });
+    });
+
+    describe('processLargeData', () => {
+        it('should process large data without cleanup', () => {
+            expect(() => todoService.processLargeData()).not.toThrow();
+        });
+    });
+
+    describe('formatTitle', () => {
+        it('should format title to uppercase', () => {
+            expect(todoService.formatTitle('test')).toBe('TEST');
+        });
+    });
+
+    describe('logActivity', () => {
+        it('should log activity with unused parameter', () => {
+            expect(() => todoService.logActivity('test', true)).not.toThrow();
+            expect(consoleSpy).toHaveBeenCalledWith('Action:', 'test');
+        });
+    });
+
+    describe('executeUserCode', () => {
+        it('should execute user code using eval', () => {
+            expect(todoService.executeUserCode('1 + 1')).toBe(2);
         });
     });
 });
